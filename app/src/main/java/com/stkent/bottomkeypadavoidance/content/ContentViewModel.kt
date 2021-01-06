@@ -16,8 +16,8 @@ class ContentViewModel : ViewModel() {
     private val _viewState = MutableStateFlow(ContentViewState(emptyList()))
     val viewState: Flow<ContentViewState> = _viewState
 
-    private val _scrollToIndex = Channel<Int>()
-    val scrollToIndex: ReceiveChannel<Int> = _scrollToIndex
+    private val _scrollInstructions = Channel<ScrollInstruction>()
+    val scrollInstructions: ReceiveChannel<ScrollInstruction> = _scrollInstructions
 
     private lateinit var _cachedMainState: MainState
 
@@ -62,10 +62,10 @@ class ContentViewModel : ViewModel() {
         when {
             selectedNewInt -> {
                 Log.v(LOG_TAG, "ContentViewModel emitting new scrollToIndex: ${scrollIndex!!}.")
-                _scrollToIndex.offer(scrollIndex)
+                _scrollInstructions.offer(ScrollInstruction(scrollIndex, true))
             }
 
-            changedSelectedInt -> _scrollToIndex.offer(scrollIndex!!)
+            changedSelectedInt -> _scrollInstructions.offer(ScrollInstruction(scrollIndex!!, false))
         }
     }
 
